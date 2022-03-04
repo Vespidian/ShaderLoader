@@ -4,7 +4,7 @@ In .shader files, public uniforms that materials can access are also specified.
 
 Requires both a fragment and vertex stage
 
-###Each stage supports the following subsections:
+### Each stage supports the following subsections:
 - stage 	(The type of shader (VERTEX, FRAGMENT, ...))
 - source 	(The source code of the shader)
 - uniforms	(The uniforms to be exposed to any materials using this shader)
