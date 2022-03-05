@@ -4,7 +4,6 @@
 #include <string.h>
 
 #include <GL/glew.h>
-// #include <SDL2/SDL_opengl.h>
 
 #include "vectorlib.h"
 #include "debug.h"
@@ -102,7 +101,7 @@ void ShaderPassUniforms(Shader *shader){
 	}
 }
 
-void ShaderUniformFree(ShaderUniformObject *uniform){
+void ShaderUniformFree(ShaderUniform *uniform){
 	if(uniform != NULL){
 		free(uniform->name); // LEAK points here: 'name' pointer most likely overwritten
 		uniform->name = NULL;
@@ -133,7 +132,7 @@ static void ShaderStageParseUniforms(Shader *shader, unsigned int stage_id){
 				continue;
 			}
 		
-			ShaderUniformObject *tmp_uniforms = realloc(stage_ptr->uniforms, sizeof(ShaderUniformObject) * (stage_ptr->num_uniforms + 1));
+			ShaderUniform *tmp_uniforms = realloc(stage_ptr->uniforms, sizeof(ShaderUniform) * (stage_ptr->num_uniforms + 1));
 			if(tmp_uniforms != NULL){
 				stage_ptr->uniforms = tmp_uniforms;
 
@@ -200,6 +199,7 @@ static void ShaderStageParseUniforms(Shader *shader, unsigned int stage_id){
 							stage_ptr->uniforms[stage_ptr->num_uniforms].type = UNI_SAMPLER3D;
 							break;
 					}
+					shader->num_texture_slots++;
 					source_ptr += 2;
 				}else{
 					stage_ptr->uniforms[stage_ptr->num_uniforms].value._float = 0;
@@ -353,11 +353,11 @@ Shader *shader_ptr = NULL;
 	static void tfunc_uniforms(JSONState *json, unsigned int token){
 		if(shader_ptr != NULL){
 			ShaderStage *stage_ptr = &shader_ptr->stages[shader_ptr->num_stages];
-			ShaderUniformObject *uniform_ptr = &stage_ptr->uniforms[stage_ptr->num_uniforms];
+			ShaderUniform *uniform_ptr = &stage_ptr->uniforms[stage_ptr->num_uniforms];
 			if(json->tokens[token].type == JSMN_OBJECT){
 				// Allocate space for new uniform here
 
-				ShaderUniformObject *tmp_uniforms = realloc(stage_ptr->uniforms, sizeof(ShaderUniformObject) * (stage_ptr->num_uniforms + 1));
+				ShaderUniform *tmp_uniforms = realloc(stage_ptr->uniforms, sizeof(ShaderUniform) * (stage_ptr->num_uniforms + 1));
 				if(tmp_uniforms != NULL){
 					stage_ptr->uniforms = tmp_uniforms;
 					uniform_ptr = &stage_ptr->uniforms[stage_ptr->num_uniforms];
@@ -566,7 +566,7 @@ static void tfunc_shader(JSONState *json, unsigned int token){
 					}
 					break;
 				case 2: // uniforms
-					stage_ptr->uniforms = malloc(sizeof(ShaderUniformObject));
+					stage_ptr->uniforms = malloc(sizeof(ShaderUniform));
 					JSONSetTokenFunc(json, NULL, tfunc_uniforms);
 					JSONParse(json);
 					break;
@@ -613,10 +613,10 @@ Shader ShaderOpen(char *path){
 			// TODO: Possibly come back to this and optimize the checking of redundancies as well as putting uniforms into array
 
 			// Put all uniforms into shader uniform array
-			ShaderUniformObject *tmp_uniforms = NULL;
+			ShaderUniform *tmp_uniforms = NULL;
 			for(int i = 0; i < shader.num_stages; i++){
 				if(shader.stages[i].num_uniforms > 0){
-					tmp_uniforms = realloc(shader.uniforms, sizeof(ShaderUniformObject) * (shader.num_uniforms + shader.stages[i].num_uniforms + 1));
+					tmp_uniforms = realloc(shader.uniforms, sizeof(ShaderUniform) * (shader.num_uniforms + shader.stages[i].num_uniforms + 1));
 					if(tmp_uniforms != NULL){
 						shader.uniforms = tmp_uniforms;
 						tmp_uniforms = NULL;
@@ -644,7 +644,7 @@ Shader ShaderOpen(char *path){
 							#endif
 							ShaderUniformFree(&shader.uniforms[i]);
 							shader.num_uniforms--;
-							memmove(&shader.uniforms[i], &shader.uniforms[i + 1], sizeof(ShaderUniformObject) * (shader.num_uniforms - i));
+							memmove(&shader.uniforms[i], &shader.uniforms[i + 1], sizeof(ShaderUniform) * (shader.num_uniforms - i));
 							i--;
 							break;
 						}
@@ -654,7 +654,7 @@ Shader ShaderOpen(char *path){
 			}
 
 			tmp_uniforms = NULL;
-			tmp_uniforms = realloc(shader.uniforms, sizeof(ShaderUniformObject) * (shader.num_uniforms + 1));
+			tmp_uniforms = realloc(shader.uniforms, sizeof(ShaderUniform) * (shader.num_uniforms + 1));
 			if(tmp_uniforms != NULL){
 				shader.uniforms = tmp_uniforms;
 
@@ -662,9 +662,7 @@ Shader ShaderOpen(char *path){
 					DebugLog(D_ACT, "%s: Removed redundant uniforms", shader.path);
 				#endif
 
-				// Compile each stage
-
-				// Compile shader program
+				// Compile shader
 				ShaderCompile(&shader);
 
 				for(int i = 0; i < shader.num_uniforms; i++){
@@ -744,7 +742,7 @@ int ShaderSearchUniform(Shader *shader, char *name){
 	return -1;
 }
 
-// --- PRIMITIVES ---
+/* --- PRIMITIVES --- */
 
 
 void UniformSetBool(Shader *shader, char *uniform_name, bool value){
@@ -777,7 +775,7 @@ void UniformSetFloat(Shader *shader, char *uniform_name, float value){
 	}
 }
 
-// --- VECTOR (datatype) ---
+/* --- VECTOR (datatype) --- */
 
 
 void UniformSetVec2(Shader *shader, char *uniform_name, vec2 value){
@@ -807,7 +805,7 @@ void UniformSetVec4(Shader *shader, char *uniform_name, vec4 value){
 		}
 	}
 }
-// --- VECTOR (manual) ---
+/* --- VECTOR (manual) --- */
 
 
 void UniformSetVec2_m(Shader *shader, char *uniform_name, float x, float y){
@@ -844,7 +842,7 @@ void UniformSetVec4_m(Shader *shader, char *uniform_name, float x, float y, floa
 	}
 }
 
-// --- MATRIX ---
+/* --- MATRIX --- */
 
 
 void UniformSetMat2(Shader *shader, char *uniform_name, mat2 mat){
@@ -875,7 +873,7 @@ void UniformSetMat4(Shader *shader, char *uniform_name, mat4 mat){
 	}
 }
 
-// --- SAMPLERS ---
+/* --- SAMPLERS --- */
 
 
 void UniformSetSampler1D(Shader *shader, char *uniform_name, int sampler){
