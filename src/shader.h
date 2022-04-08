@@ -130,6 +130,7 @@ typedef struct Shader{
 
 /**
  *  Active shader (in the OpenGL state)
+ *  ( Must be set by the renderer )
  */
 extern unsigned int current_shader;
 
