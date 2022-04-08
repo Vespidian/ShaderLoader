@@ -4,7 +4,7 @@
 #include "vectorlib.h"
 #include <cglm/cglm.h>
 
-enum ShaderTypes { UNI_BOOL = 0, UNI_INT, UNI_FLOAT, UNI_VEC2, UNI_VEC3, UNI_VEC4, UNI_MAT2, UNI_MAT3, UNI_MAT4, UNI_SAMPLER1D, UNI_SAMPLER2D, UNI_SAMPLER3D};
+enum UNIFORM_TYPE{ UNI_BOOL = 0, UNI_INT, UNI_FLOAT, UNI_VEC2, UNI_VEC3, UNI_VEC4, UNI_MAT2, UNI_MAT3, UNI_MAT4, UNI_SAMPLER1D, UNI_SAMPLER2D, UNI_SAMPLER3D};
 
 /**
  *  @brief Shader uniform containing value, name and other flags
@@ -23,7 +23,7 @@ typedef struct ShaderUniform{
 	bool is_uploaded;
 
 	// Uniform type (float, vec3, ..)
-	enum ShaderTypes type;
+	enum UNIFORM_TYPE type;
 	union value{
 		bool _bool;
 		int _int;
