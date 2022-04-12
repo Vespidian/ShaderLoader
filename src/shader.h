@@ -158,6 +158,13 @@ void ShaderSet(Shader *shader);
  */
 void ShaderPassUniforms(Shader *shader);
 
+/**
+ * 	@brief Retrieve the index of a uniform by name from 'shader'
+ * 	@return Index of 'shader.uniforms[]' or -1 upon error (uniform name doesnt exist)
+ */
+int ShaderUniformFind(Shader *shader, char *name);
+
+
 // Primitives
 void UniformSetBool(Shader *shader, char *uniform_name, bool value);
 void UniformSetInt(Shader *shader, char *uniform_name, int value);
