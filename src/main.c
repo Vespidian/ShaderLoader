@@ -17,9 +17,15 @@ int main(){
 		Shader mask_shader = ShaderOpen("../assets/mask.shader");
 		Shader mesh_shader = ShaderOpen("../assets/mesh.shader");
 		Shader quad_shader = ShaderOpen("../assets/quad_default.shader");
-		Shader ui_shader = ShaderOpen("../assets/ui.shader");
+		Shader ui_shader = ShaderOpen("../assets/ui.shader"); // Purposefully errors (not surrounded by curly braces and other things)
 
-
+		ShaderReload(&default_shader);
+		ShaderReload(&axis_shader);
+		ShaderReload(&grid_shader);
+		ShaderReload(&mask_shader);
+		ShaderReload(&mesh_shader);
+		ShaderReload(&quad_shader);
+		ShaderReload(&ui_shader);
 
 		ShaderFree(&default_shader);
 		ShaderFree(&axis_shader);
