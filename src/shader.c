@@ -21,7 +21,7 @@
 // #define SHADER_DEBUG
 
 // Only to be defined for testing the library (useful so valgrind doesnt show false leaks)
-// #define SHADER_NOOPENGL
+#define SHADER_NOOPENGL
 
 const char *shader_types[] = {
 	"UNDEFINED",
@@ -336,7 +336,7 @@ static void ShaderCompile(Shader *shader){
 			DebugLog(D_ACT, "%s: Compilation successfull!\n", shader->path);
 		}
 	#else
-		DebugLog(D_ACT, "%s: Shader compilation failed: Since 'SHADER_NOOPENGL' is defined, no opengl functions will be called\n");
+		DebugLog(D_ACT, "%s: Shader compilation failed: Since 'SHADER_NOOPENGL' is defined, no opengl functions will be called\n", shader->path);
 	#endif
 }
 
