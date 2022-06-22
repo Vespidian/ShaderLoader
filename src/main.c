@@ -27,6 +27,9 @@ int main(){
 		ShaderReload(&quad_shader);
 		ShaderReload(&ui_shader);
 
+		UniformSetFloat(&default_shader, "value", 3.4f); // Not exposed uniform
+		UniformSetFloat(&default_shader, "exposed_uni", 7.15f); // Exposed uniform
+
 		ShaderFree(&default_shader);
 		ShaderFree(&axis_shader);
 		ShaderFree(&grid_shader);

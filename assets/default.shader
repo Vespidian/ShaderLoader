@@ -41,6 +41,10 @@
 		stage: FRAGMENT,
 		uniforms:[
 			{
+				uniform: exposed_uni,
+				description: "Test uniform",
+			},
+			{
 				uniform: tint_u,
 				description: "Tint", 
 				type: VEC3, 
@@ -66,6 +70,7 @@
 			uniform int seed_u;
 			uniform vec3 color_u;
 			uniform float value;
+			uniform float exposed_uni;
 			in vec3 color_v;
 
 			void main(){
