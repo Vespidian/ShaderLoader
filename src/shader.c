@@ -68,47 +68,49 @@ void ShaderPassUniforms(Shader *shader){
 
 	for(int i = 0; i < shader->num_uniforms; i++){
 		if(!shader->uniforms[i].is_uploaded){
-			switch(shader->uniforms[i].type){
-				case UNI_BOOL:
-					glUniform1i(shader->uniforms[i].uniform, (int)shader->uniforms[i].value._bool);
-					break;
-				case UNI_INT:
-					glUniform1i(shader->uniforms[i].uniform, (int)shader->uniforms[i].value._int);
-					break;
-				case UNI_FLOAT:
-					glUniform1f(shader->uniforms[i].uniform, shader->uniforms[i].value._float);
-					break;
+			#ifndef NOOPENGL
+				switch(shader->uniforms[i].type){
+					case UNI_BOOL:
+						glUniform1i(shader->uniforms[i].uniform, (int)shader->uniforms[i].value._bool);
+						break;
+					case UNI_INT:
+						glUniform1i(shader->uniforms[i].uniform, (int)shader->uniforms[i].value._int);
+						break;
+					case UNI_FLOAT:
+						glUniform1f(shader->uniforms[i].uniform, shader->uniforms[i].value._float);
+						break;
 
-				case UNI_VEC2:
-					glUniform2fv(shader->uniforms[i].uniform, 1, shader->uniforms[i].value._vec2.v);
-					break;
-				case UNI_VEC3:
-					glUniform3fv(shader->uniforms[i].uniform, 1, shader->uniforms[i].value._vec3.v);
-					break;
-				case UNI_VEC4:
-					glUniform4fv(shader->uniforms[i].uniform, 1, shader->uniforms[i].value._vec4.v);
-					break;
+					case UNI_VEC2:
+						glUniform2fv(shader->uniforms[i].uniform, 1, shader->uniforms[i].value._vec2.v);
+						break;
+					case UNI_VEC3:
+						glUniform3fv(shader->uniforms[i].uniform, 1, shader->uniforms[i].value._vec3.v);
+						break;
+					case UNI_VEC4:
+						glUniform4fv(shader->uniforms[i].uniform, 1, shader->uniforms[i].value._vec4.v);
+						break;
 
-				case UNI_MAT2:
-					glUniformMatrix2fv(shader->uniforms[i].uniform, 1, GL_FALSE, shader->uniforms[i].value._mat2[0]);
-					break;
-				case UNI_MAT3:
-					glUniformMatrix3fv(shader->uniforms[i].uniform, 1, GL_FALSE, shader->uniforms[i].value._mat3[0]);
-					break;
-				case UNI_MAT4:
-					glUniformMatrix4fv(shader->uniforms[i].uniform, 1, GL_FALSE, shader->uniforms[i].value._mat4[0]);
-					break;
+					case UNI_MAT2:
+						glUniformMatrix2fv(shader->uniforms[i].uniform, 1, GL_FALSE, shader->uniforms[i].value._mat2[0]);
+						break;
+					case UNI_MAT3:
+						glUniformMatrix3fv(shader->uniforms[i].uniform, 1, GL_FALSE, shader->uniforms[i].value._mat3[0]);
+						break;
+					case UNI_MAT4:
+						glUniformMatrix4fv(shader->uniforms[i].uniform, 1, GL_FALSE, shader->uniforms[i].value._mat4[0]);
+						break;
 
-				case UNI_SAMPLER1D:
-					glUniform1i(shader->uniforms[i].uniform, shader->uniforms[i].value._sampler1d);
-					break;
-				case UNI_SAMPLER2D:
-					glUniform1i(shader->uniforms[i].uniform, shader->uniforms[i].value._sampler2d);
-					break;
-				case UNI_SAMPLER3D:
-					glUniform1i(shader->uniforms[i].uniform, shader->uniforms[i].value._sampler3d);
-					break;
-			}
+					case UNI_SAMPLER1D:
+						glUniform1i(shader->uniforms[i].uniform, shader->uniforms[i].value._sampler1d);
+						break;
+					case UNI_SAMPLER2D:
+						glUniform1i(shader->uniforms[i].uniform, shader->uniforms[i].value._sampler2d);
+						break;
+					case UNI_SAMPLER3D:
+						glUniform1i(shader->uniforms[i].uniform, shader->uniforms[i].value._sampler3d);
+						break;
+				}
+			#endif
 			shader->uniforms[i].is_uploaded = true;
 		}
 	}
